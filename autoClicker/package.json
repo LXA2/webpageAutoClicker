@@ -1,0 +1,36 @@
+{
+  "name": "autoclicker",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "a",
+    "win": {
+      "icon": "./icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": false
+    }
+  },
+  "author": "null",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "electron": "^35.0.3"
+  }
+}

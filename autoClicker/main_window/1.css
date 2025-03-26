@@ -1,0 +1,61 @@
+html {
+    user-select: none;
+    background-color: #00000048;
+    margin: 0;
+    padding: 0;
+}
+
+.process {
+    font-size: 3vw;
+    margin-top: 10vh;
+    margin-left: 5vw;
+}
+
+.btn {
+    width: fit-content;
+    padding: 0.5vw;
+    font-size: 2vw;
+    margin-top: 2.5vh;
+    margin-left: 5vw;
+    border-radius: 1vw;
+    background-color: rgba(37, 132, 234, 0.662);
+    transition: all 100ms ease-in-out;
+}
+
+.btn:hover {
+    border-radius: 1.5vw;
+    background-color: rgba(84, 167, 255, 0.662);
+    transform: scale(1.05);
+}
+
+#close {
+    position: absolute;
+    top: 5vw;
+    right: 5vw;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(238, 255, 0, 0.53);
+    border-radius: 1vw;
+    transition: all 100ms ease-in-out;
+}
+
+#minimize {
+    position: absolute;
+    top: 5vw;
+    right: 15vw;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(238, 255, 0, 0.53);
+    border-radius: 1vw;
+    transition: all 100ms ease-in-out;
+}
+
+#close:hover{
+    background-color: rgba(238, 255, 0, 0.817);
+    transform: scale(1.05);
+}
+
+#minimize:hover{
+    background-color: rgba(238, 255, 0, 0.817);
+    transform: scale(1.05);
+}

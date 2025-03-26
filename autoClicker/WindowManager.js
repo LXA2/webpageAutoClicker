@@ -3,8 +3,8 @@ const { BrowserWindow } = require('electron');
 class WindowManager {
     constructor() {
         this.windows = {}; // 存储所有窗口
-        this.urlStack = []; // 记录 URL 访问历史
-        this.stackLock = false;
+        //this.urlStack = []; // 记录 URL 访问历史
+        //this.stackLock = false;
     }
 
     createWindow(options, id) {
@@ -18,33 +18,12 @@ class WindowManager {
 
         // 拦截新窗口打开，并在当前窗口加载新 URL
         win.webContents.setWindowOpenHandler(({ url }) => {
-            if (this.stackLock) return { action: 'deny' };
+            //if (this.stackLock) return { action: 'deny' };
 
-            this.urlStack.push(win.webContents.getURL()); // 记录当前页面到历史栈
+            //this.urlStack.push(win.webContents.getURL()); // 记录当前页面到历史栈
             win.loadURL(url); // 在当前窗口加载新 URL
             return { action: 'deny' }; // 阻止默认新窗口行为
         });
-
-        // 监听页面跳转
-        win.webContents.on('will-navigate', (event, url) => {
-            if (this.stackLock) return;
-
-            console.log(`Navigating to: ${url}`);
-            this.urlStack.push(win.webContents.getURL());
-        });
-
-        // 拦截 a 标签的 _blank 行为，并在当前窗口加载新 URL
-        /*win.webContents.on('did-finish-load', () => {
-            win.webContents.executeJavaScript(`
-                document.querySelectorAll('a[target="_blank"]').forEach(anchor => {
-                    anchor.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        const newUrl = this.href;
-                        window.location.href = newUrl; // 在当前窗口加载
-                    });
-                });
-            `);
-        });*/
 
         return win;
     }

@@ -2,8 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('purified_drinking_water', {
     //sendVideoState: (state) => ipcRenderer.send('video-state', state),
-    closeSelf: () => ipcRenderer.send('close_window', "self"),
-    
+    closeSelf: () => ipcRenderer.send('close_window', "self")
 });
 
 /*window.addEventListener('DOMContentLoaded', () => {
@@ -22,15 +21,3 @@ contextBridge.exposeInMainWorld('purified_drinking_water', {
     }
 });*/
 
-
-/*window.addEventListener('DOMContentLoaded', () => {
-    document.querySelector("close").addEventListener("click" , () => {
-        ipcRenderer.send('close_window', "main");
-    });
-    document.querySelectorAll("btn")[0].addEventListener("click" , () => {
-        ipcRenderer.send('login');
-    });
-    document.querySelectorAll("btn")[2].addEventListener("click" , () => {
-        ipcRenderer.send('start');
-    });
-});*/

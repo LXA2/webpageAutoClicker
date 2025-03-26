@@ -1,20 +1,25 @@
 html {
     user-select: none;
-    background-color: #00000048;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+body{
     margin: 0;
     padding: 0;
 }
 
 .process {
-    font-size: 3vw;
+    font-size: 4vw;
     margin-top: 10vh;
     margin-left: 5vw;
 }
 
 .btn {
     width: fit-content;
-    padding: 0.5vw;
-    font-size: 2vw;
+    padding: 0.6vw;
+    font-size: 3vw;
     margin-top: 2.5vh;
     margin-left: 5vw;
     border-radius: 1vw;
@@ -31,11 +36,12 @@ html {
 #close {
     position: absolute;
     top: 5vw;
-    right: 5vw;
+    right: 4vw;
     width: 50px;
     height: 50px;
     background-color: rgba(238, 255, 0, 0.53);
     border-radius: 1vw;
+    z-index: 999;
     transition: all 100ms ease-in-out;
 }
 
@@ -47,15 +53,34 @@ html {
     height: 50px;
     background-color: rgba(238, 255, 0, 0.53);
     border-radius: 1vw;
+    z-index: 1000;
     transition: all 100ms ease-in-out;
 }
 
-#close:hover{
+#close:hover {
     background-color: rgba(238, 255, 0, 0.817);
     transform: scale(1.05);
 }
 
-#minimize:hover{
+#minimize:hover {
     background-color: rgba(238, 255, 0, 0.817);
     transform: scale(1.05);
+}
+
+.title-bar {
+    -webkit-app-region: drag;
+    height: 3vh;
+    min-height: 40px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    
+    /* 下边缘渐变透明 */
+    mask-image: linear-gradient(
+        to bottom, 
+        black 0%, 
+        black calc(100% - 20px), /* 从距离底部15px处开始渐变 */
+        transparent 100%
+    );
 }

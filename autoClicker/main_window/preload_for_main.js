@@ -30,10 +30,10 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelector("#minimize").addEventListener("click" , () => {
         ipcRenderer.send('minimize_window', "main");
     });
-    document.querySelectorAll("btn")[0].addEventListener("click" , () => {
+    document.querySelectorAll(".btn")[0].addEventListener("click" , () => {
         ipcRenderer.send('login');
     });
-    document.querySelectorAll("btn")[1].addEventListener("click" , () => {
+    document.querySelectorAll(".btn")[1].addEventListener("click" , () => {
         ipcRenderer.send('start');
     });
 });

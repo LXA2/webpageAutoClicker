@@ -24,6 +24,7 @@ body{
     margin-left: 5vw;
     border-radius: 1vw;
     background-color: rgba(37, 132, 234, 0.662);
+    box-shadow: 0.5vw 0.6vw 1vw rgba(118, 171, 228, 0.662);;
     transition: all 100ms ease-in-out;
 }
 
@@ -39,10 +40,10 @@ body{
     right: 4vw;
     width: 50px;
     height: 50px;
-    background-color: rgba(238, 255, 0, 0.53);
+    background-color: rgba(53, 166, 231, 0.684);
     border-radius: 1vw;
     z-index: 999;
-    transition: all 100ms ease-in-out;
+    transition: all 150ms ease-in-out;
 }
 
 #minimize {
@@ -51,20 +52,20 @@ body{
     right: 15vw;
     width: 50px;
     height: 50px;
-    background-color: rgba(238, 255, 0, 0.53);
+    background-color: rgba(53, 166, 231, 0.684);
     border-radius: 1vw;
     z-index: 1000;
-    transition: all 100ms ease-in-out;
+    transition: all 150ms ease-in-out;
 }
 
 #close:hover {
     background-color: rgba(238, 255, 0, 0.817);
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 #minimize:hover {
     background-color: rgba(238, 255, 0, 0.817);
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .title-bar {
@@ -83,4 +84,28 @@ body{
         black calc(100% - 20px), /* 从距离底部15px处开始渐变 */
         transparent 100%
     );
+}
+
+.test{
+    color: 
+    rgb(203, 190, 190);
+}
+
+.data_area{
+    position: absolute;
+    bottom: 5%;
+    right: 2vw;
+    height: 60vh;
+    width: 55vw;
+    font-size: 2.5vw;
+    background-color: rgba(0, 0, 0, 0.051);
+    border-radius: 5vw;
+    padding: 3vw;
+    box-shadow: 1.2vw 1vw 1vw #939393ab;
+}
+
+#course_id{
+    width: 80%;
+    font-size: 2vw;
+    height: 3vw;
 }

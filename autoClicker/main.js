@@ -2,6 +2,13 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const WindowManager = require('./WindowManager');
 const path = require('path');
 const { protocol } = require('electron');
+const storage = require('./storage');
+
+var logged_in = false;
+var courseid = "";
+if (storage.getValueByKey("courseid")){
+    courseid = storage.getValueByKey("courseid");
+}
 
 /*app.whenReady().then(() => {
     protocol.handle('*', (request) => {
@@ -65,7 +72,7 @@ app.whenReady().then(() => {
         }
     });
 
-    ipcMain.on('login', (event, title) => {
+    ipcMain.on('login', (event) => {
         const login_window_config = {
             width: 1280,
             height: 720,
@@ -80,6 +87,11 @@ app.whenReady().then(() => {
         };
         let login_window = WindowManager.createWindow(login_window_config, "login");
         login_window.loadURL("https://i.mooc.chaoxing.com");
+        login_window.on('close', (event) => {
+            if (!logged_in) {
+                showAlert("没有登录成功,请重新登录");
+            }
+        });
         login_window.webContents.on('did-navigate', (event, url) => {
             checkUrlAndTriggerAction(url)
         });
@@ -88,14 +100,44 @@ app.whenReady().then(() => {
         });
     });
 
-    ipcMain.on('start', (event, title) => {
+    ipcMain.on('edit_course_id', (event, cid) => {
+        courseid = cid;
+        storage.setKeyValue('courseid', courseid);
+        console.log("courseid:",courseid);
+    });
 
+    ipcMain.on('start', (event, title) => {
+        const working_progress_window_config = {
+            width: 1000,
+            height: 500,
+            x: 0,
+            y: 0,
+            fullscreen: false,
+            frame: true,
+            focusable: true,
+            resizable: true,
+            //transparent: true,
+            webPreferences: {
+                webSecurity: true,  // 禁用Web安全策略（慎用）
+                allowRunningInsecureContent: false,  // 允许加载不安全内容
+                contextIsolation: true,
+                preload: path.resolve(__dirname, "./preload.js")
+            },
+        };
+        let working_progress_window = WindowManager.createWindow(working_progress_window_config, "login");
+        working_progress_window.loadURL("https://i.mooc.chaoxing.com/space/");
+        //working_progress_window.loadURL("https://www.electronjs.org");
+        working_progress_window.blur();
     });
 
     WindowManager.windows["main"].on('close', (event) => {
         event.preventDefault();
         showQuitConfirmation();
     });
+
+    ipcMain.handle('get_courseid', () => {
+        return courseid;
+      });
 });
 
 app.on('window-all-closed', () => {
@@ -110,6 +152,7 @@ function checkUrlAndTriggerAction(url) {
     const targetPattern = 'https://i.mooc.chaoxing.com/space/'
 
     if (url.startsWith(targetPattern)) {
+        logged_in = true;
         login_window.close();
         showAlert("登录成功");
     }
@@ -150,8 +193,8 @@ function showAlert(message, window = null) {
 
     // 同步显示对话框（阻塞直到用户点击）
     if (window) {
-        dialog.showMessageBoxSync(window, options)
+        dialog.showMessageBoxSync(window, options);
     } else {
-        dialog.showMessageBoxSync(options)
+        dialog.showMessageBoxSync(options);
     }
 }

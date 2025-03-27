@@ -36,4 +36,15 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll(".btn")[1].addEventListener("click" , () => {
         ipcRenderer.send('start');
     });
+    document.querySelector("#course_id").addEventListener("input" , () => {
+        ipcRenderer.send("edit_course_id", document.querySelector("#course_id").value);
+    });
+    set_initial_value()
 });
+
+async function set_initial_value(){
+    let courseid = await ipcRenderer.invoke('get_courseid');
+    if (courseid){
+        document.querySelector("#course_id").value = courseid;
+    }
+}

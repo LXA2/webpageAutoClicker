@@ -60,7 +60,7 @@ async function loop1(count) {
 
     let courseid = await ipcRenderer.invoke('get_courseid');
     console.log("@@@@@@courseid:", courseid);
-    let ele = search(document, `[courseid="${courseid}"] a`, 0);
+    let ele = search(document, `[courseid="${courseid}"] a`);
     if (ele) {
         console.log("aaaaa:", ele.href);
         window.location.href = ele.href;
@@ -117,12 +117,13 @@ function play_video(count) {//document.querySelector("iframe").contentDocument.q
         alert(`video not found`);
     }
 
-    const play_btn = search(document, ".vjs-big-play-button", 0);
-    const video = search(document, "video", 0);
+    const play_btn = search(document, ".vjs-big-play-button");
+    const video = search(document, "video");
     if (video) {
         console.log("video tag obtained");
         video.addEventListener('pause', () => {
             //play_video(1);
+            setTimeout(on_paused(), 200);
         });
     }
     if (play_btn) {
@@ -146,21 +147,69 @@ function play_video(count) {//document.querySelector("iframe").contentDocument.q
             }
         });
     }
-
+    setInterval(() => {
+        const state_flag = search(document, ".ans-job-icon.ans-job-icon-clear");
+        if (state_flag) {
+            const label = state_flag.getAttribute("aria-label");
+            if (label == "任务点已完成") {
+                loop_click(document.querySelectorAll(".catalog_points_yi")[0], 1);
+                play_video();
+            }
+        }
+    }, 1000);
 }
 
-function on_paused(){
-    const title = search(document,".tkTopic_title",0);
-    if (title){//遇到题目
-        if (title == "判断题"){
-            
+function on_paused() {
+    const title = search(document, ".tkTopic_title");
+    if (title) {//遇到题目
+        console.log("func on_paused:遇到题目");
+        if (title.innerText == "判断题") {
+            console.log("func on_paused:判断题");
+            const options = searchAll(document, "[type = 'radio']");
+            const submit_btn = search(document, "#videoquiz-submit");
+            //console.log("func on_paused:", options, "@", submit_btn);
+            if (options.length > 0 && submit_btn) {
+                options[0].click();
+                submit_btn.click();
+                function loop4(count) {
+                    if (count > 1000) {
+                        console.error("没等到判断题正确错误反馈");
+                    }
+                    const spanNot = search(document, "#spanNot");
+                    const spanHas = search(document, "#spanHas");
+                    if (spanHas && spanNot) {
+                        if (spanHas.style.display == "" && spanNot.style.display == "") {
+                            setTimeout(loop4(count++), 100);
+                        } else if (spanHas.style.display == "block") {
+                            //回答正确
+                        } else if (spanNot.style.display == "block") {
+                            //回答错误
+                            options[1].click();
+                            submit_btn.click();
+                        }
+                    }
+                }
+                loop4(1);
+            } else {
+                console.error("无法找到题目或发生错误");
+            }
         }
-    }else {
-
+    } else {//播放完成或异常暂停
+        console.log("func on_paused:播放完成或异常暂停");
+        const state_flag = search(document, ".ans-job-icon.ans-job-icon-clear");
+        if (state_flag) {
+            const label = state_flag.getAttribute("aria-label");
+            if (label == "任务点未完成") {
+                play_video(1);
+            } else if (label == "任务点已完成") {
+                loop_click(document.querySelectorAll(".catalog_points_yi")[0], 1);
+                play_video();
+            }
+        }
     }
 }
 
-function search(dom, selector, depth = 0) {
+function search(dom, selector) {
     try {
         selector = selector.toString();
 
@@ -177,7 +226,7 @@ function search(dom, selector, depth = 0) {
                 // Access the iframe's document (may fail due to CORS)
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 if (iframeDoc) {
-                    return search(iframeDoc, selector, depth + 1);
+                    return search(iframeDoc, selector);
                 }
             } catch (e) {
                 console.error("Failed to access iframe content:", e);
@@ -186,6 +235,43 @@ function search(dom, selector, depth = 0) {
         }
 
         return null; // Element not found
+    } catch (e) {
+        console.error("Search error:", e);
+        return null;
+    }
+}
+
+function searchAll(dom, selector) {
+    try {
+        selector = selector.toString();
+        let results = [];
+
+        // 在当前DOM中查找
+        const elements = dom.querySelectorAll(selector);
+        if (elements.length > 0) {
+            results.push(...elements);
+        }
+
+        // 检查iframe
+        const iframes = dom.querySelectorAll("iframe");
+        for (const iframe of iframes) {
+            try {
+                // 尝试访问iframe内容
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+                if (iframeDoc) {
+                    // 递归搜索iframe内容并合并结果
+                    const iframeResults = searchAll(iframeDoc, selector);
+                    if (iframeResults && iframeResults.length > 0) {
+                        results.push(...iframeResults);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to access iframe content:", e);
+                // 继续处理其他iframe而不是直接返回
+            }
+        }
+
+        return results.length > 0 ? results : null;
     } catch (e) {
         console.error("Search error:", e);
         return null;

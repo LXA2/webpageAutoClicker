@@ -1,5 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+
+var time_adjusted = 0;
+
 /*contextBridge.exposeInMainWorld('purified_drinking_water', {
     //sendVideoState: (state) => ipcRenderer.send('video-state', state),
     closeSelf: () => ipcRenderer.send('close_window', "self")
@@ -136,11 +139,25 @@ function play_video(count) {//document.querySelector("iframe").contentDocument.q
     if (video) {
         // 确保不超过视频总时长
         video.addEventListener('canplay', () => {
-            const targetTime = video.duration - 0.5; // 留0.5秒缓冲
-            video.currentTime = targetTime;
+            if (time_adjusted < 3) {
+                const targetTime = video.duration - 0.5; // 留0.5秒缓冲
+                video.currentTime = targetTime;
+                time_adjusted++;
+            }
         });
     }
 
+}
+
+function on_paused(){
+    const title = search(document,".tkTopic_title",0);
+    if (title){//遇到题目
+        if (title == "判断题"){
+            
+        }
+    }else {
+
+    }
 }
 
 function search(dom, selector, depth = 0) {

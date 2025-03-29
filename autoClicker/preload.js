@@ -199,7 +199,7 @@ function on_paused() {
                 options[0].click();
                 setTimeout(()=>{
                     submit_btn.click();
-                    setTimeout(loop4(1),500);
+                    setTimeout(loop4(1),600);
                 },330);
             } else {
                 console.error("无法找到题目或发生错误");

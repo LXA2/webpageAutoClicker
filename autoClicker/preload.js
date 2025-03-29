@@ -38,7 +38,8 @@ window.addEventListener('DOMContentLoaded', () => {
         loop3(1);
     }
     else if (current_url.startsWith("https://mooc1.chaoxing.com/mycourse/studentstudy?chapterId")) {
-        loop_click(document.querySelectorAll(".catalog_points_yi")[0], 1);
+        //loop_click(document.querySelectorAll(".catalog_points_yi")[0], 1);
+        loop_click(document.querySelectorAll(".catalog_points_yi")[0].parentElement.querySelector("span"), 1);
         play_video();
     }
 
@@ -120,10 +121,10 @@ function play_video(count) {//document.querySelector("iframe").contentDocument.q
     const play_btn = search(document, ".vjs-big-play-button");
     const video = search(document, "video");
     if (video) {
-        console.log("video tag obtained");
+        //console.log("video tag obtained");
         video.addEventListener('pause', () => {
             //play_video(1);
-            setTimeout(() => {on_paused()}, 100);
+            setTimeout(() => {on_paused()}, 1000);
         });
     }
     if (play_btn) {
@@ -152,11 +153,19 @@ function play_video(count) {//document.querySelector("iframe").contentDocument.q
         if (state_flag) {
             const label = state_flag.getAttribute("aria-label");
             if (label == "任务点已完成") {
-                loop_click(document.querySelectorAll(".catalog_points_yi")[0], 1);
-                play_video();
+                console.log("任务点完成，进行下一章");
+                const next_point_btn = searchAll(document,".catalog_points_yi");
+                if (next_point_btn.length > 0){
+                    console.log("找到下一章按钮",next_point_btn[0]);
+                    next_point_btn[0].click();
+                    loop_click(next_point_btn[0].parentElement.querySelector("span"), 1);
+                    setTimeout(()=>{play_video()},10000);
+                }else{
+                    alert("所有任务完成或发生错误");
+                }
             }
         }
-    }, 500);
+    }, 5000);
 }
 
 function on_paused() {

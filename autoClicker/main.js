@@ -128,6 +128,7 @@ app.whenReady().then(() => {
         working_progress_window.loadURL("https://i.mooc.chaoxing.com/space/");
         //working_progress_window.loadURL("https://www.electronjs.org");
         working_progress_window.blur();
+        working_progress_window.webContents.setAudioMuted(true);
     });
 
     WindowManager.windows["main"].on('close', (event) => {
@@ -164,7 +165,7 @@ function showQuitConfirmation() {
         type: 'question',
         buttons: ['确认', '取消'],
         title: '确认',
-        message: '确定要退出应用吗？',
+        message: '确定要退出吗？',
         defaultId: 1, // 默认选中取消按钮
         cancelId: 1   // 按ESC或点击窗口外时相当于取消
     })

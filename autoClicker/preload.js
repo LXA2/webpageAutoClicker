@@ -54,7 +54,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 async function loop1(count) {
-    if (count > 1000) {
+    if (count > 500) {
         alert(`请关闭窗口重试\nfailed to find element "${await ipcRenderer.invoke('get_courseid')}"`);
     }
 
@@ -68,11 +68,11 @@ async function loop1(count) {
 
     setTimeout(() => {
         loop1(count++);
-    }, 1000);
+    }, 500);
 }
 
 function loop2(count) {
-    if (count > 1000) {
+    if (count > 500) {
         alert(`发生错误\niframe not found`);
     }
     if (document.getElementById("frame_content-zj")) {
@@ -81,11 +81,11 @@ function loop2(count) {
     }
     setTimeout(() => {
         loop2(count++);
-    }, 100);
+    }, 200);
 }
 
 function loop3(count) {
-    if (count > 1000) {
+    if (count > 500) {
         alert(`没有未完成的章节了\n或者发生错误`);
     }
 
@@ -95,7 +95,7 @@ function loop3(count) {
 
     setTimeout(() => {
         loop3(count++);
-    }, 100);
+    }, 200);
 }
 
 function loop_click(element, count) {
@@ -123,7 +123,7 @@ function play_video(count) {//document.querySelector("iframe").contentDocument.q
         console.log("video tag obtained");
         video.addEventListener('pause', () => {
             //play_video(1);
-            setTimeout(on_paused(), 200);
+            setTimeout(() => {on_paused()}, 100);
         });
     }
     if (play_btn) {
@@ -156,7 +156,7 @@ function play_video(count) {//document.querySelector("iframe").contentDocument.q
                 play_video();
             }
         }
-    }, 1000);
+    }, 500);
 }
 
 function on_paused() {
@@ -165,43 +165,55 @@ function on_paused() {
         console.log("func on_paused:遇到题目");
         if (title.innerText == "判断题") {
             console.log("func on_paused:判断题");
-            const options = searchAll(document, "[type = 'radio']");
-            const submit_btn = search(document, "#videoquiz-submit");
-            //console.log("func on_paused:", options, "@", submit_btn);
+            const options = searchAll(document, "[type = 'radio']");//两个选项
+            const submit_btn = search(document, "#videoquiz-submit");//提交按钮
+            console.log("func on_paused:options:", options, ", submit_btn:", submit_btn);
             if (options.length > 0 && submit_btn) {
-                options[0].click();
-                submit_btn.click();
                 function loop4(count) {
-                    if (count > 1000) {
+                    if (count > 50) {
                         console.error("没等到判断题正确错误反馈");
                     }
-                    const spanNot = search(document, "#spanNot");
-                    const spanHas = search(document, "#spanHas");
+                    const spanNot = search(document, "#spanNot");//回答错误文字提示
+                    const spanHas = search(document, "#spanHas");//回答正确
+                    console.log("func on_paused:spanHas:", spanHas, ", spanNot:", spanNot);
                     if (spanHas && spanNot) {
-                        if (spanHas.style.display == "" && spanNot.style.display == "") {
-                            setTimeout(loop4(count++), 100);
+                        //console.log("func on_paused:spanHas:", spanHas.style.display, ", spanNot:", spanNot.style.display);
+                        if (spanHas.style.display != "block" && spanNot.style.display != "block") {
+                            return setTimeout(() => {loop4(count++)}, 200);
                         } else if (spanHas.style.display == "block") {
+                            console.log("回答正确");
                             //回答正确
                         } else if (spanNot.style.display == "block") {
                             //回答错误
+                            console.log("回答错误");
                             options[1].click();
-                            submit_btn.click();
+                            setTimeout(() => {submit_btn.click()},10);
+                            setTimeout(()=>{
+                                if (spanHas.style.display != "block" && spanNot.style.display != "block"){
+                                    console.error("答题过程出错");
+                                }
+                            },1000);
                         }
                     }
                 }
-                loop4(1);
+                options[0].click();
+                setTimeout(()=>{
+                    submit_btn.click();
+                    setTimeout(loop4(1),500);
+                },330);
             } else {
                 console.error("无法找到题目或发生错误");
             }
         }
     } else {//播放完成或异常暂停
-        console.log("func on_paused:播放完成或异常暂停");
         const state_flag = search(document, ".ans-job-icon.ans-job-icon-clear");
         if (state_flag) {
             const label = state_flag.getAttribute("aria-label");
             if (label == "任务点未完成") {
+                console.log("func on_paused:异常暂停,强制恢复播放");
                 play_video(1);
             } else if (label == "任务点已完成") {
+                console.log("func on_paused:播放完成");
                 loop_click(document.querySelectorAll(".catalog_points_yi")[0], 1);
                 play_video();
             }

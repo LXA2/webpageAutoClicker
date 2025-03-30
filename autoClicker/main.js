@@ -1,13 +1,18 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const WindowManager = require('./WindowManager');
 const path = require('path');
+const fs = require('fs');
 const { protocol } = require('electron');
 const storage = require('./storage');
 
 var logged_in = false;
 var courseid = "";
+var preloadPath = path.resolve(__dirname, "./preload.js");
 if (storage.getValueByKey("courseid")){
     courseid = storage.getValueByKey("courseid");
+}
+if (storage.getValueByKey("preloadPath")){
+    preloadPath = storage.getValueByKey("preloadPath");
 }
 
 /*app.whenReady().then(() => {
@@ -82,7 +87,7 @@ app.whenReady().then(() => {
             //transparent: true,
             webPreferences: {
                 contextIsolation: true,
-                preload: path.resolve(__dirname, "./preload.js")
+                preload: preloadPath
             },
         };
         let login_window = WindowManager.createWindow(login_window_config, "login");
@@ -106,6 +111,26 @@ app.whenReady().then(() => {
         console.log("courseid:",courseid);
     });
 
+    ipcMain.on('update-preload', (event, filePath) => {
+        const userDataPath = app.getPath('userData'); // Electron 用户数据目录
+        const tempPreloadPath = path.join(userDataPath, 'custom-preload.js');
+        if (filePath == "reset"){
+            preloadPath = path.resolve(__dirname, "./preload.js");
+            storage.setKeyValue('preloadPath', preloadPath);
+            return;
+        }
+        filePath = path.resolve(filePath);
+        console.log("resolver path:", filePath);
+        storage.setKeyValue('preloadPath', filePath);
+    
+        // 复制文件到 userData 目录
+        fs.copyFile(filePath, tempPreloadPath, (err) => {
+            if (!err) {
+                preloadPath = tempPreloadPath; // 更新 preload.js 路径
+            }
+        });
+    });
+
     ipcMain.on('start', (event, title) => {
         const working_progress_window_config = {
             width: 1000,
@@ -121,7 +146,7 @@ app.whenReady().then(() => {
                 webSecurity: true,  // 禁用Web安全策略（慎用）
                 allowRunningInsecureContent: false,  // 允许加载不安全内容
                 contextIsolation: true,
-                preload: path.resolve(__dirname, "./preload.js")
+                preload: preloadPath
             },
         };
         let working_progress_window = WindowManager.createWindow(working_progress_window_config, "login");

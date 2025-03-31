@@ -1,7 +1,10 @@
 {
-  "name": "autoclicker",
+  "name": "hahahahaha",
   "version": "1.0.0",
   "main": "main.js",
+  "description": "A simple Electron app",
+  "author": "null",
+  "license": "ISC",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder"
@@ -27,10 +30,8 @@
       "createStartMenuShortcut": false
     }
   },
-  "author": "null",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "electron": "^35.0.3"
+  "devDependencies": {
+    "electron": "^35.0.3",
+    "electron-builder": "^26.0.12"
   }
 }

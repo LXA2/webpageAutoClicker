@@ -87,7 +87,7 @@ app.whenReady().then(() => {
             //transparent: true,
             webPreferences: {
                 contextIsolation: true,
-                preload: preloadPath
+                //preload: preloadPath
             },
         };
         let login_window = WindowManager.createWindow(login_window_config, "login");

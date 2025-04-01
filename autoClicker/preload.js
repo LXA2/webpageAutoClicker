@@ -62,9 +62,12 @@ async function loop1(count) {
     let courseid = await ipcRenderer.invoke('get_courseid');
     console.log("@@@@@@courseid:", courseid);
     let ele = search(document, `[courseid="${courseid}"] a`);
+    let ele_new_version = search(document, `#c_${courseid} a`);
     if (ele) {
         console.log("aaaaa:", ele.href);
         window.location.href = ele.href;
+    }else if (ele_new_version){
+        window.location.href = ele_new_version.href;
     }
 
     setTimeout(() => {
@@ -75,6 +78,12 @@ async function loop1(count) {
 function loop2(count) {
     if (count > 500) {
         alert(`发生错误\niframe not found`);
+    }
+    if (count > 3) {
+        let chapter_btn = search(document,"#nav_12566");
+        if (chapter_btn){
+            chapter_btn.click();
+        }
     }
     if (document.getElementById("frame_content-zj")) {
         const source = document.getElementById("frame_content-zj").src;
